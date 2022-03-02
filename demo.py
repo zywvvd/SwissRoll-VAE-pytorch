@@ -26,7 +26,7 @@ class GibbsDistModel(torch.nn.Module):
         plt.figure(1)
         plt.clf()
         plt.plot(x, fx)
-        plt.title('min/max f(x): {:.3f}/{:.3f}'.format(fx.min(), fx.max()))
+        plt.title('min/max f(x): {:.3f}/{:.3f}'.format(E.min(), E.max()))
         plt.pause(.5)
 
 
@@ -46,7 +46,7 @@ class Dataset:
 data_main = Dataset()
 data_vice = Dataset()
 model = GibbsDistModel()
-optim = torch.optim.SGD(model.parameters(), lr=1e-3)
+optim = torch.optim.SGD(model.parameters(), lr=1e-1)
 
 for iepoch in tqdm(range(100)):
 
