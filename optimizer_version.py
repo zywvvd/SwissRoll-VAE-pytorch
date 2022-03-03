@@ -17,68 +17,53 @@ class GibbsDistModel(torch.nn.Module):
         return energy
 
     def draw(self):
-        x = torch.linspace(-5, 5, 500)
+        x = torch.linspace(-3, 3, 300)
         E = self.forward(x)
         E = E.detach().numpy()
         x = x.detach().numpy()
         fx = np.exp(-E)
 
-        plt.figure(1, figsize=(12, 8))
+        plt.figure(1)
         plt.clf()
         plt.plot(x, fx)
-        plt.xlim([-5, 5])
         plt.title('min/max E(x): {:.3f}/{:.3f}'.format(E.min(), E.max()))
         plt.pause(.5)
 
 
 
 class Dataset:
-    def __init__(self, size=10000):
+    def __init__(self, size=5000):
         self.samples = np.random.randn(size).astype('float32')
 
     def batch(self, size=320):
         for idx in range(0, len(self.samples), size):
             yield self.samples[idx:idx+size]
 
-    def __len__(self):
-        return len(self.samples)
-
 
 #
 # Start training
 #
-data = Dataset()
+data_main = Dataset()
+data_vice = Dataset()
 model = GibbsDistModel()
-
-lr = 1e-1
+optim = torch.optim.SGD(model.parameters(), lr=1e-3)
 
 for iepoch in tqdm(range(100)):
 
     # visualize results
     model.draw()
 
-    model.zero_grad()
-    batch_iter = data.batch(len(data))
-    batch = next(batch_iter)
-    x = torch.tensor(batch)
-    energy = model(x)
-    energy = torch.mean(energy)
-    energy.backward()
+    optim.zero_grad()
+    for batch_main in data_main.batch(1):
+        x_main = torch.tensor(batch_main)
+        energy_main = model(x_main)
+        grad_energy_main = energy_main.backward()
 
-    param_grads = list()
-    for param in model.parameters():
-        param_grads.append(param.grad.clone())
+        batch_vice_iter = data_vice.batch(5000)
+        batch_vice = next(batch_vice_iter)
+        x_vice = torch.tensor(batch_vice)
+        energy_vice = model(x_vice)
+        energy_vice = -torch.mean(energy_vice)
+        grad_energy_vice = energy_vice.backward()
 
-
-    model.zero_grad()
-    batch_iter = data.batch(len(data))
-    batch = next(batch_iter)
-    x = torch.tensor(batch)
-    energy = model(x)
-    energy = torch.mean(energy)
-    energy.backward()
-
-    with torch.no_grad():
-        for param, vice_grad in zip(model.parameters(), param_grads):
-            print(param.grad, vice_grad)
-            param -= lr * (param.grad - vice_grad)
+    optim.step()
