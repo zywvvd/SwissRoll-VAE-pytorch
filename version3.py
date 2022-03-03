@@ -38,7 +38,7 @@ class GibbsDistModel(torch.nn.Module):
 
 
 class Dataset:
-    def __init__(self, size=1024):
+    def __init__(self, size=100):
         self.samples = 3 * np.random.randn(size).astype('float32')
 
     def batch(self, size=320):
@@ -55,7 +55,7 @@ class Dataset:
 data = Dataset()
 model = GibbsDistModel()
 
-lr = 1
+lr = 1e-2
 
 for iepoch in tqdm(range(1000)):
 
@@ -76,14 +76,17 @@ for iepoch in tqdm(range(1000)):
 
 
     param_grads = list()
-    batch_size = 1
-    for batch in data.batch(batch_size):
+    for batch in data.batch(1):
         model.zero_grad()
         x = torch.tensor(batch)
         energy = model(x)
-        energy = torch.mean(energy)
         energy.backward()
 
         with torch.no_grad():
             for param, vice_grad in zip(model.parameters(), vice_param_grads):
-                param -= (lr * (param.grad - vice_grad) / batch_size)
+                grad = param.grad.clone() - vice_grad
+                param_grads.append(grad)
+
+    with torch.no_grad():
+        for param, grad in zip(model.parameters(), param_grads):
+            param -= (lr * grad / len(data))

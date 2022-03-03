@@ -3,30 +3,29 @@ import numpy as np
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-class Abs(torch.nn.Module):
+class Square(torch.nn.Module):
     def forward(self, x):
-        return torch.abs(x)
+        return torch.square(x)
 
 class GibbsDistModel(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.energy_func = torch.nn.Sequential(
-            torch.nn.Linear(4, 1),
-            Abs()
+            torch.nn.Linear(3, 1),
+            Square()
         )
 
     def forward(self, x):
-        feature = torch.stack([x, x**2, x**3, x**4], dim=1)
+        feature = torch.stack([x, x**2, x**3], dim=1)
         energy = self.energy_func(feature)
         return energy
 
     def draw(self):
-        with torch.no_grad():
-            x = torch.linspace(-5, 5, 500)
-            E = self.forward(x)
-            E = E.detach().numpy()
-            x = x.detach().numpy()
-            fx = np.exp(-E)
+        x = torch.linspace(-5, 5, 500)
+        E = self.forward(x)
+        E = E.detach().numpy()
+        x = x.detach().numpy()
+        fx = np.exp(-E)
 
         plt.figure(1, figsize=(12, 8))
         plt.clf()
@@ -38,8 +37,8 @@ class GibbsDistModel(torch.nn.Module):
 
 
 class Dataset:
-    def __init__(self, size=1024):
-        self.samples = 3 * np.random.randn(size).astype('float32')
+    def __init__(self, size=5000):
+        self.samples = np.random.randn(size).astype('float32')
 
     def batch(self, size=320):
         for idx in range(0, len(self.samples), size):
@@ -76,14 +75,17 @@ for iepoch in tqdm(range(1000)):
 
 
     param_grads = list()
-    batch_size = 1
-    for batch in data.batch(batch_size):
+    for batch in data.batch(1):
         model.zero_grad()
         x = torch.tensor(batch)
         energy = model(x)
-        energy = torch.mean(energy)
         energy.backward()
 
         with torch.no_grad():
             for param, vice_grad in zip(model.parameters(), vice_param_grads):
-                param -= (lr * (param.grad - vice_grad) / batch_size)
+                grad = param.grad.clone() - vice_grad
+                param_grads.append(grad)
+
+    with torch.no_grad():
+        for param, grad in zip(model.parameters(), param_grads):
+            param -= (lr * grad / len(data))
