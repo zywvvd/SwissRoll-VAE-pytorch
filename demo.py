@@ -7,12 +7,12 @@ class GibbsDistModel(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.energy_func = torch.nn.Sequential(
-            torch.nn.Linear(3, 1),
+            torch.nn.Linear(5, 1),
             torch.nn.ReLU()
         )
 
     def forward(self, x):
-        feature = torch.stack([x, x**2, x**3], dim=1)
+        feature = torch.stack([x, x**2, x**3, x**4, x**5], dim=1)
         energy = self.energy_func(feature)
         return energy
 
@@ -26,7 +26,7 @@ class GibbsDistModel(torch.nn.Module):
         plt.figure(1)
         plt.clf()
         plt.plot(x, fx)
-        plt.title('min/max f(x): {:.3f}/{:.3f}'.format(E.min(), E.max()))
+        plt.title('min/max E(x): {:.3f}/{:.3f}'.format(E.min(), E.max()))
         plt.pause(.5)
 
 
@@ -46,7 +46,7 @@ class Dataset:
 data_main = Dataset()
 data_vice = Dataset()
 model = GibbsDistModel()
-optim = torch.optim.SGD(model.parameters(), lr=1e-1)
+optim = torch.optim.SGD(model.parameters(), lr=1e-3)
 
 for iepoch in tqdm(range(100)):
 
