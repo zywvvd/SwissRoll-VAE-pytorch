@@ -1,1 +1,1 @@
-from .best_pairing import GFG
+from .best_pairing import hungarian_match

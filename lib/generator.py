@@ -3,19 +3,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.spatial import distance_matrix
-from .utils import GFG
+from .utils import hungarian_match
 
-class GeneratorBase(object):
+class GeneratorBase(torch.nn.Module):
     def __init__(self):
+        super().__init__()
         self.mse_loss = torch.nn.MSELoss(reduction='mean')
 
     def minimum_dist_pairing(self, samples, anchor_samples):
         Xs = samples.detach().numpy()
         Ys = anchor_samples.detach().numpy()
         dist_mat = distance_matrix(Xs, Ys)
-        import ipdb; ipdb.set_trace()
-        g = GFG(-dist_mat)
-        return g.compute_row_indices()
+        indices = hungarian_match(dist_mat)
+        return indices
 
     def loss(self, gt_samples):
         nSamples = len(gt_samples)
@@ -37,7 +37,7 @@ class GeneratorBase(object):
         plt.show()
 
 
-class MLPGenerator(torch.nn.Module, GeneratorBase):
+class MLPGenerator(GeneratorBase):
     def __init__(self):
         super().__init__()
         self.generator = torch.nn.Sequential(
