@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial import distance_matrix
 from .utils import hungarian_match
 
-class GeneratorBase(torch.nn.Module):
+class BestMatchGenerator(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.mse_loss = torch.nn.MSELoss(reduction='mean')
@@ -34,11 +34,11 @@ class GeneratorBase(torch.nn.Module):
         plt.figure(111, figsize=(8,8))
         plt.clf()
         plt.scatter(Xs, Ys)
-        plt.title('Predicted Distribution')
+        plt.title(type(self).__name__)
         plt.pause(.1)
 
 
-class MLPGenerator(GeneratorBase):
+class MLPGenerator(BestMatchGenerator):
     def __init__(self):
         super().__init__()
         self.noise_dim = 2

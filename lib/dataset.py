@@ -14,8 +14,9 @@ class DatasetBase(object):
         nSamples = max(len(self), 500)
         Xs, Ys = self.samples[:nSamples,0], self.samples[:nSamples,1]
         plt.figure(123, figsize=(8,8))
+        plt.clf()
         plt.scatter(Xs, Ys)
-        plt.title('swiss roll')
+        plt.title(type(self).__name__)
         plt.pause(.1)
 
 
@@ -28,3 +29,8 @@ class DatasetSwissRoll(DatasetBase):
 class DatasetUniform(DatasetBase):
     def __init__(self, size=1024):
         self.samples = np.random.rand(size, 2)
+
+
+class DatasetGaussian(DatasetBase):
+    def __init__(self, size=1024):
+        self.samples = np.random.randn(size, 2) * 5
