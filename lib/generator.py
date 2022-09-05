@@ -41,16 +41,16 @@ class GeneratorBase(torch.nn.Module):
 class MLPGenerator(GeneratorBase):
     def __init__(self):
         super().__init__()
+        self.noise_dim = 2
+        hidden_dim = 512
         self.generator = torch.nn.Sequential(
-            torch.nn.Linear(2, 64),
+            torch.nn.Linear(self.noise_dim, hidden_dim),
             torch.nn.Tanh(),
-            torch.nn.Linear(64, 32),
-            torch.nn.Tanh(),
-            torch.nn.Linear(32, 2),
+            torch.nn.Linear(hidden_dim, 2),
         )
 
     def forward(self, nSamples):
-        standard_gauss_samples = np.random.randn(nSamples, 2)
+        standard_gauss_samples = np.random.randn(nSamples, self.noise_dim)
         noise_seed = torch.tensor(standard_gauss_samples, dtype=torch.float32)
         pred_samples = self.generator(noise_seed)
         return pred_samples
