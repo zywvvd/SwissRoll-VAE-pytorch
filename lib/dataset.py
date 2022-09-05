@@ -13,13 +13,18 @@ class DatasetBase(object):
     def show(self):
         nSamples = max(len(self), 500)
         Xs, Ys = self.samples[:nSamples,0], self.samples[:nSamples,1]
-        plt.figure(figsize=(8,8))
+        plt.figure(123, figsize=(8,8))
         plt.scatter(Xs, Ys)
         plt.title('swiss roll')
-        plt.show()
+        plt.pause(.1)
 
 
 class DatasetSwissRoll(DatasetBase):
     def __init__(self, size=1024):
         swiss_roll_samples, _ = make_swiss_roll(size, noise=1, random_state=123)
         self.samples = swiss_roll_samples[:,[0,2]]
+
+
+class DatasetUniform(DatasetBase):
+    def __init__(self, size=1024):
+        self.samples = np.random.rand(size, 2)

@@ -31,10 +31,10 @@ class GeneratorBase(torch.nn.Module):
         pred_samples = self.forward(nSamples)
         pred_samples = pred_samples.detach().numpy()
         Xs, Ys = pred_samples[:,0], pred_samples[:,1]
-        plt.figure(1, figsize=(8,8))
+        plt.figure(111, figsize=(8,8))
         plt.clf()
         plt.scatter(Xs, Ys)
-        plt.title('swiss roll')
+        plt.title('Predicted Distribution')
         plt.pause(.1)
 
 
