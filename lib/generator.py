@@ -42,8 +42,10 @@ class MLPGenerator(GeneratorBase):
     def __init__(self):
         super().__init__()
         self.generator = torch.nn.Sequential(
-            torch.nn.Linear(2, 32),
-            torch.nn.Sigmoid(),
+            torch.nn.Linear(2, 64),
+            torch.nn.Tanh(),
+            torch.nn.Linear(64, 32),
+            torch.nn.Tanh(),
             torch.nn.Linear(32, 2),
         )
 
