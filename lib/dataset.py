@@ -1,6 +1,7 @@
 from sklearn.datasets import make_swiss_roll
 import numpy as np
 import matplotlib.pyplot as plt
+from .utils import show
 
 class DatasetBase(object):
     def batch(self, size=320):
@@ -12,12 +13,7 @@ class DatasetBase(object):
 
     def show(self):
         nSamples = max(len(self), 500)
-        Xs, Ys = self.samples[:nSamples,0], self.samples[:nSamples,1]
-        plt.figure(123, figsize=(8,8))
-        plt.clf()
-        plt.scatter(Xs, Ys)
-        plt.title(type(self).__name__)
-        plt.pause(.1)
+        show(nSamples, type(self).__name__)
 
 
 class DatasetSwissRoll(DatasetBase):
