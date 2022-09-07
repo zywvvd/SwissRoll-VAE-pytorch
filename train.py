@@ -32,11 +32,11 @@ if __name__ == '__main__':
     model.to(get_device_str())
 
     optim = torch.optim.Adam(model.parameters(), lr=2e-2)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optim, step_size=400, gamma=.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optim, step_size=1000, gamma=.7)
 
     # training
     batch_size = 512
-    iter_num = 2000
+    iter_num = 10000
     fig, ax = plt.subplots(1, 3, figsize=[15, 5])
     qbar = tqdm(total=iter_num)
 
@@ -53,7 +53,9 @@ if __name__ == '__main__':
         scheduler.step()
         optim.step()
         # model.show()
-        temp_show(ax, gt_samples, forward_res[4].cpu().detach().numpy(), model, batch_size)
+        if iter % 200 == 0:
+            temp_show(ax, gt_samples, forward_res[4].cpu().detach().numpy(), model, batch_size)
+
         qbar.update(1)
         qbar.set_description(desc=f"step: {iter}, lr: {format(optim.param_groups[0]['lr'], '.2e')}, loss: {format(loss['loss'], '.3f')}, Reconstruction_Loss: {format(loss['Reconstruction_Loss'], '.3f')}, KLD: {format(loss['KLD'], '.3f')}.")
 
