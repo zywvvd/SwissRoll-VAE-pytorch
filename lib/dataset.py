@@ -9,9 +9,9 @@ class DatasetBase(object):
     def __len__(self):
         return len(self.samples)
 
-    def show(self):
+    def show(self, fix=False, ax=None):
         samples = self.gen_data_xy()
-        show(samples, type(self).__name__)
+        show(samples, type(self).__name__, fix=fix, ax=ax)
 
 
 class DatasetSwissRoll(DatasetBase):
