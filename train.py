@@ -16,7 +16,7 @@ model.to('cuda:0')
 optim = torch.optim.Adam(model.parameters(), lr=2e-2)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optim, step_size=500, gamma=.5)
 
-batch_size = 512
+batch_size = 2048
 
 for iepoch in range(800):
     # visualize prediction and ground truth
@@ -29,7 +29,7 @@ for iepoch in range(800):
     tensor_gt_samples = torch.Tensor(gt_samples).to('cuda:0')
     forward_res = model(tensor_gt_samples)
 
-    loss = model.loss_function(forward_res, 12)
+    loss = model.loss_function(forward_res, 1)
     print(f"step {iepoch}: loss: {loss['loss']}, Reconstruction_Loss: {loss['Reconstruction_Loss']}, KLD:{loss['KLD']}. ")
     loss['loss'].backward()
 
@@ -38,4 +38,4 @@ for iepoch in range(800):
     model.show()
 
 data.show()
-pass
+

@@ -10,5 +10,5 @@ def show(samples, name='Samples'):
     plt.xlim(-15, 15)
     plt.ylim(-15, 15)
     plt.title(name)
-    plt.pause(.005)
+    plt.pause(.002)
     

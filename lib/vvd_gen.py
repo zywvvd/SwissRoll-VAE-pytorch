@@ -14,7 +14,7 @@ class VVD_VAE(BaseVAE):
         self.latent_dim = latent_dim
 
         if hidden_dims is None:
-            hidden_dims = [8, 16, 16, 64]
+            hidden_dims = [8, 16, 32, 128, 64, 32, 8]
 
         ori_in_channels = in_channels
 
@@ -36,20 +36,22 @@ class VVD_VAE(BaseVAE):
         # Build Decoder
         modules = []
 
+        de_hidden_dims = [hidden_dims[-1], 16, 256, 512, 128, 64, 16]
+
         self.decoder_input = nn.Linear(latent_dim, hidden_dims[-1])
         hidden_dims.reverse()
 
-        for i in range(len(hidden_dims) - 1):
+        for i in range(len(de_hidden_dims) - 1):
             modules.append(
                 nn.Sequential(
-                    nn.Linear(hidden_dims[i], hidden_dims[i + 1]),
+                    nn.Linear(de_hidden_dims[i], de_hidden_dims[i + 1]),
                     nn.LeakyReLU())
             )
 
         self.decoder = nn.Sequential(*modules)
 
         self.final_layer = nn.Sequential(
-                            nn.Linear(hidden_dims[-1], ori_in_channels))
+                            nn.Linear(de_hidden_dims[-1], ori_in_channels))
 
     def encode(self, input: Tensor) -> List[Tensor]:
         """
