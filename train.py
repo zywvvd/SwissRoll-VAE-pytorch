@@ -14,11 +14,11 @@ model = VVD_VAE()
 model.to('cuda:0')
 
 optim = torch.optim.Adam(model.parameters(), lr=2e-2)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optim, step_size=500, gamma=.5)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optim, step_size=400, gamma=.5)
 
-batch_size = 2048
+batch_size = 256
 
-for iepoch in range(800):
+for iepoch in range(2000):
     # visualize prediction and ground truth
     # data.show()
     # model.show()
