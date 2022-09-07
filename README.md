@@ -26,3 +26,7 @@ python train
 ![](https://101.43.39.125/HexoFiles/vvd_pc_upload/vae-res.gif)
 
 ![](https://101.43.39.125/HexoFiles/vvd_file_mt/202209071827475.jpg)
+
+### References
+
+- https://github.com/AntixK/PyTorch-VAE
